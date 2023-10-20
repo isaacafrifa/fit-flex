@@ -1,0 +1,13 @@
+package iam.fitflex;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class FitflexApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(FitflexApplication.class, args);
+    }
+
+}
