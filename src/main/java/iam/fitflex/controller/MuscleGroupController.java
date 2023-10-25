@@ -31,7 +31,7 @@ public record MuscleGroupController(
             @RequestParam(defaultValue = "10") Integer size
     ) {
         log.info("Get endpoint for ALL muscle groups invoked");
-        String defaultSort="id";
+        String defaultSort = "id";
         return muscleGroupService.getAllMuscleGroupsByPaginationAndSorting(page, size, defaultSort);
     }
 

@@ -33,7 +33,7 @@ public class Exercise {
     private Long id;
     private String name;
     private int sets;
-    private int repetitions;
+    private int reps;
     @CreatedDate
     private LocalDate createdDate;
     @LastModifiedDate
@@ -42,6 +42,5 @@ public class Exercise {
     private MuscleGroup muscleGroup;
     @Enumerated(EnumType.STRING)
     private ExerciseGroup exerciseGroup;
-
 
 }
