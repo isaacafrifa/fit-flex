@@ -55,7 +55,6 @@ public record MuscleGroupService(MuscleGroupRepository muscleGroupRepository, Mu
     }
 
     public MuscleGroupResponseDto updateMuscleGroup(String muscleGroupName, MuscleGroupDto tobeUpdatedDto) {
-        muscleGroupMapper.convertToEntity(tobeUpdatedDto);
         var existingMuscleGroup = getExistingMuscleGroup(muscleGroupName);
         existingMuscleGroup.setName(tobeUpdatedDto.name());
         var saved = muscleGroupRepository.save(existingMuscleGroup);

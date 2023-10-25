@@ -13,6 +13,8 @@ public class MuscleGroupMapper {
     }
 
     public MuscleGroup convertToEntity(MuscleGroupDto muscleGroupDto) {
-        return new MuscleGroup(null, muscleGroupDto.name());
+        // Replace spaces with hyphens in the exercise name
+        String name = muscleGroupDto.name().replace(" ", "-");
+        return new MuscleGroup(null, name);
     }
 }
