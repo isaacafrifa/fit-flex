@@ -37,7 +37,7 @@ public record ExerciseController(
 
     @GetMapping("/{name}")
     public ExerciseResponseDto getOne(@PathVariable("name") String name) {
-        log.info("Get endpoint for SINGLE exercise with name {} invoked", name);
+        log.info("Get endpoint for SINGLE exercise with name [{}] invoked", name);
         return exerciseService.getExerciseByName(name);
     }
 
@@ -56,7 +56,7 @@ public record ExerciseController(
 
     @DeleteMapping("/{name}")
     public void delete(@PathVariable("name") String name) {
-        log.info("Delete endpoint for exercise with name {} invoked", name);
+        log.info("Delete endpoint for exercise with name [{}] invoked", name);
         exerciseService.deleteExercise(name);
     }
 }
