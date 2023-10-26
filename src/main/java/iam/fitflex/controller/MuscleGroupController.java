@@ -37,7 +37,7 @@ public record MuscleGroupController(
 
     @GetMapping("/{name}")
     public MuscleGroupResponseDto getOne(@PathVariable("name") String name) {
-        log.info("Get endpoint for SINGLE muscle group with name {} invoked", name);
+        log.info("Get endpoint for SINGLE muscle group with name [{}] invoked", name);
         return muscleGroupService.getMuscleGroupByName(name);
     }
 
@@ -56,7 +56,7 @@ public record MuscleGroupController(
 
     @DeleteMapping("/{name}")
     public void delete(@PathVariable("name") String name) {
-        log.info("Delete endpoint for muscle group with name {} invoked", name);
+        log.info("Delete endpoint for muscle group with name [{}] invoked", name);
         muscleGroupService.deleteMuscleGroup(name);
     }
 }
