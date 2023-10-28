@@ -22,6 +22,7 @@ jobs:
       - name: Run Tests
         run: mvn test
 
+      - uses: actions/checkout@master
       - name: Run Synk Scan
         uses: snyk/actions/maven-3-jdk-17@master
         continue-on-error: true # To make sure that SARIF upload gets called
