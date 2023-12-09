@@ -4,25 +4,26 @@ on:
   push:
     branches:
       - feature/*
+  # Prevent running the entire workflow when changes are made to the README.md
+    paths:
+      - '!README.md'
 
 jobs:
+  # Run unit tests to make sure everything is ✅
   test:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
           distribution: 'corretto'
           java-version: '17'
-
       - name: Run Tests
         run: mvn test
-        
 
+  # Run security scans to make sure everything is ✅
   security-scan:
     runs-on: ubuntu-latest
     steps:
