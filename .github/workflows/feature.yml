@@ -5,8 +5,8 @@ on:
     branches:
       - feature/*
   # Prevent running the entire workflow when changes are made to the README.md
-    paths:
-      - '!README.md'
+#    paths:
+#      - '!README.md'
 
 jobs:
   # Run unit tests to make sure everything is ✅
