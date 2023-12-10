@@ -1,9 +1,13 @@
-name: Feature Branch CI
+name: Develop Branch CI
 
+# This workflow is triggered whenever a new PR is created to the develop branch
 on:
+  pull_request:
+    branches:
+      - develop
   push:
     branches:
-      - feature/*
+      - develop
   # Prevent running the entire workflow when changes are made to the README.md
     paths:
       - '!README.md'
