@@ -1,0 +1,39 @@
+name: Develop Branch CI
+
+# This workflow is triggered whenever a new PR is created to the develop branch
+on:
+  pull_request:
+    branches:
+      - develop
+  push:
+    branches:
+      - develop
+  # Prevent running the entire workflow when changes are made to the README.md
+    paths-ignore:
+      - 'README.md'
+
+jobs:
+  # Run unit tests to make sure everything is ✅
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'corretto'
+          java-version: '17'
+      - name: Run Tests
+        run: mvn verify
+
+  # Run security scans to make sure everything is ✅
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/maven@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
