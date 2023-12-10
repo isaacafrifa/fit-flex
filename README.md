@@ -9,4 +9,4 @@ This is a REST API that showcases various workout exercises.
 + Postgres
 
 ## Future Work
-TBD
++ API to be deployed to a cloud provider
