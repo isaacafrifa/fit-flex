@@ -46,7 +46,7 @@ public record MuscleGroupService(MuscleGroupRepository muscleGroupRepository, Mu
 
     public MuscleGroupResponseDto createMuscleGroup(MuscleGroupDto muscleGroupDto) {
         //check if item already exists
-        if (muscleGroupRepository.existsByName(muscleGroupDto.name())) {
+        if (muscleGroupRepository.existsByNameEqualsIgnoreCase(muscleGroupDto.name())) {
             log.warn("MuscleGroup [{}] already exists", muscleGroupDto.name());
             throw new ResourceAlreadyExists("MuscleGroup already exists");
         }
