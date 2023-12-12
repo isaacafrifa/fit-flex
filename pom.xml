@@ -15,7 +15,7 @@
     <description>fitflex</description>
     <properties>
         <java.version>17</java.version>
-        <testcontainers.version>1.19.3</testcontainers.version>
+        <testcontainers.version>1.18.3</testcontainers.version>
     </properties>
     <dependencies>
         <dependency>
@@ -67,7 +67,6 @@
             <artifactId>postgresql</artifactId>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
     <dependencyManagement>
