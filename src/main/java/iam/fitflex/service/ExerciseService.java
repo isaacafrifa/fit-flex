@@ -1,6 +1,6 @@
 package iam.fitflex.service;
 
-import iam.fitflex.dto.ExerciseDto;
+import iam.fitflex.dto.ExerciseRequestDto;
 import iam.fitflex.dto.ExerciseResponseDto;
 import iam.fitflex.dto.PageSliceDto;
 import iam.fitflex.entity.Exercise;
@@ -51,19 +51,19 @@ public record ExerciseService (ExerciseRepository exerciseRepository,
                 );
     }
 
-    public ExerciseResponseDto createExercise(ExerciseDto exerciseDto) {
+    public ExerciseResponseDto createExercise(ExerciseRequestDto exerciseRequestDto) {
 
         //check if item already exists
-        String exerciseName = inputFormatter.replaceSpacesWithHyphens(exerciseDto.name());   // Replace spaces with hyphens in the exercise name
+        String exerciseName = inputFormatter.replaceSpacesWithHyphens(exerciseRequestDto.name());   // Replace spaces with hyphens in the exercise name
         if (exerciseRepository.existsByNameEqualsIgnoreCase(exerciseName)) {
-            log.warn("Exercise [{}] already exists", exerciseDto.name());
+            log.warn("Exercise [{}] already exists", exerciseRequestDto.name());
             throw new ResourceAlreadyExists("Exercise already exists");
         }
-        var savedExercise = exerciseRepository.save(exerciseMapper.convertToEntity(exerciseDto));
+        var savedExercise = exerciseRepository.save(exerciseMapper.convertToEntity(exerciseRequestDto));
         return exerciseMapper.convertToResponseDto(savedExercise);
     }
 
-    public ExerciseResponseDto updateExercise(String exerciseName, ExerciseDto tobeUpdatedDto) {
+    public ExerciseResponseDto updateExercise(String exerciseName, ExerciseRequestDto tobeUpdatedDto) {
         var existingExercise= getExercise(exerciseName);
 
         existingExercise.setName(inputFormatter.replaceSpacesWithHyphens(tobeUpdatedDto.name()));

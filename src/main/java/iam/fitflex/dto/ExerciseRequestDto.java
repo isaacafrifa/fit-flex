@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 
 // This is the request DTO for Exercise
-public record ExerciseDto(
+public record ExerciseRequestDto(
         @NotBlank(message = "Provide exercise name")
         String name,
         @Min(value = 1, message = "Sets should be at least 1")

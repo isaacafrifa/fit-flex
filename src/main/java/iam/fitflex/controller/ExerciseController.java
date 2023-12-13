@@ -1,6 +1,6 @@
 package iam.fitflex.controller;
 
-import iam.fitflex.dto.ExerciseDto;
+import iam.fitflex.dto.ExerciseRequestDto;
 import iam.fitflex.dto.ExerciseResponseDto;
 import iam.fitflex.dto.PageSliceDto;
 import iam.fitflex.service.ExerciseService;
@@ -43,13 +43,13 @@ public record ExerciseController(
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ExerciseResponseDto post(@RequestBody @Valid ExerciseDto requestDto) {
+    public ExerciseResponseDto post(@RequestBody @Valid ExerciseRequestDto requestDto) {
         log.info("Post endpoint for exercise() invoked using {}", requestDto);
         return exerciseService.createExercise(requestDto);
     }
 
     @PutMapping("/{name}")
-    public ExerciseResponseDto update(@PathVariable("name") String name, @RequestBody @Valid ExerciseDto requestDto) {
+    public ExerciseResponseDto update(@PathVariable("name") String name, @RequestBody @Valid ExerciseRequestDto requestDto) {
         log.info("Put endpoint for exercise() invoked using {}", requestDto);
         return exerciseService.updateExercise(name, requestDto);
     }

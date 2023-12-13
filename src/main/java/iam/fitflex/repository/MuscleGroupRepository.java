@@ -10,5 +10,5 @@ public interface MuscleGroupRepository extends JpaRepository<MuscleGroup,Long> {
 
  Optional<MuscleGroup> findMuscleGroupByNameEqualsIgnoreCase(String muscleGroupName);
 
- boolean existsByName(String muscleGroupName);
+ boolean existsByNameEqualsIgnoreCase(String muscleGroupName);
 }
