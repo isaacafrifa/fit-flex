@@ -1,6 +1,6 @@
 package iam.fitflex.mappper;
 
-import iam.fitflex.dto.ExerciseDto;
+import iam.fitflex.dto.ExerciseRequestDto;
 import iam.fitflex.dto.ExerciseResponseDto;
 import iam.fitflex.entity.Exercise;
 import iam.fitflex.entity.MuscleGroup;
@@ -28,17 +28,17 @@ public class ExerciseMapper {
                 exercise.getExerciseGroup());
     }
 
-    public Exercise convertToEntity(ExerciseDto exerciseDto) {
+    public Exercise convertToEntity(ExerciseRequestDto exerciseRequestDto) {
         Exercise exercise = new Exercise();
 
         // Replace spaces with hyphens in the exercise name
-        String exerciseName = inputFormatter.replaceSpacesWithHyphens(exerciseDto.name());
+        String exerciseName = inputFormatter.replaceSpacesWithHyphens(exerciseRequestDto.name());
         exercise.setName(exerciseName);
-        exercise.setSets(exerciseDto.sets());
-        exercise.setReps(exerciseDto.reps());
+        exercise.setSets(exerciseRequestDto.sets());
+        exercise.setReps(exerciseRequestDto.reps());
 
         // Retrieve the MuscleGroup entity by its name
-        var muscleGroupName = exerciseDto.muscleGroupName();
+        var muscleGroupName = exerciseRequestDto.muscleGroupName();
         var muscleGroup = muscleGroupRepository
                 .findMuscleGroupByNameEqualsIgnoreCase(muscleGroupName)
                 .orElseGet(() -> {
@@ -48,7 +48,7 @@ public class ExerciseMapper {
                     return muscleGroupRepository.save(newMuscleGroup);
                 });
         exercise.setMuscleGroup(muscleGroup);
-        exercise.setExerciseGroup(exerciseDto.exerciseGroup());
+        exercise.setExerciseGroup(exerciseRequestDto.exerciseGroup());
         return exercise;
     }
 }

@@ -1,6 +1,6 @@
 package iam.fitflex.service;
 
-import iam.fitflex.dto.ExerciseDto;
+import iam.fitflex.dto.ExerciseRequestDto;
 import iam.fitflex.dto.ExerciseResponseDto;
 import iam.fitflex.entity.Exercise;
 import iam.fitflex.entity.MuscleGroup;
@@ -9,6 +9,7 @@ import iam.fitflex.exception.ResourceAlreadyExists;
 import iam.fitflex.exception.ResourceNotFound;
 import iam.fitflex.mappper.ExerciseMapper;
 import iam.fitflex.repository.ExerciseRepository;
+import iam.fitflex.repository.MuscleGroupRepository;
 import iam.fitflex.util.InputFormatter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -45,6 +46,8 @@ class ExerciseServiceTest {
     @Mock
     private ExerciseRepository exerciseRepository;
     @Mock
+    private MuscleGroupRepository muscleGroupRepository;
+    @Mock
     private ExerciseMapper exerciseMapper;
     @Mock
     private InputFormatter inputFormatter;
@@ -53,12 +56,12 @@ class ExerciseServiceTest {
     private Exercise exercise;
     private MuscleGroup muscleGroup;
     private ExerciseResponseDto exerciseResponseDto;
-    private static final long EXERCISE_ID=1L;
-    private static final int EXERCISE_SETS=3;
-    private static final int EXERCISE_REPS=12;
-    private static final String EXERCISE_NAME="bench_press";
+    private static final long EXERCISE_ID = 1L;
+    private static final int EXERCISE_SETS = 3;
+    private static final int EXERCISE_REPS = 12;
+    private static final String EXERCISE_NAME = "bench_press";
 
-    private static final ExerciseGroup EXERCISE_GROUP=ExerciseGroup.PUSH;
+    private static final ExerciseGroup EXERCISE_GROUP = ExerciseGroup.PUSH;
 
 
     @BeforeEach
@@ -74,7 +77,7 @@ class ExerciseServiceTest {
                 muscleGroup,
                 EXERCISE_GROUP
         );
-        exerciseResponseDto = new ExerciseResponseDto(EXERCISE_ID, EXERCISE_NAME,EXERCISE_SETS,
+        exerciseResponseDto = new ExerciseResponseDto(EXERCISE_ID, EXERCISE_NAME, EXERCISE_SETS,
                 EXERCISE_REPS, muscleGroup.getName(),
                 EXERCISE_GROUP);
     }
@@ -120,7 +123,7 @@ class ExerciseServiceTest {
         verify(exerciseRepository).findExerciseByNameEqualsIgnoreCase(formattedName);
         verify(exerciseMapper).convertToResponseDto(exercise);
         assertAll(
-                ()-> assertNotNull(actual),
+                () -> assertNotNull(actual),
                 // Assert on the entire ExerciseResponseDto
                 () -> assertEquals(exerciseResponseDto.id(), actual.id()),
                 () -> assertEquals(exerciseResponseDto.name(), actual.name()),
@@ -155,7 +158,7 @@ class ExerciseServiceTest {
     @Test
     void givenValidExerciseDto_createExercise_thenReturnResponseDto() {
         //Given
-        ExerciseDto inputDto = new ExerciseDto("Bench Press", EXERCISE_SETS,
+        ExerciseRequestDto inputDto = new ExerciseRequestDto("Bench Press", EXERCISE_SETS,
                 EXERCISE_REPS, muscleGroup.getName(), EXERCISE_GROUP);
         String formattedName = "bench_press";
         given(inputFormatter.replaceSpacesWithHyphens(anyString())).willReturn(formattedName);
@@ -177,9 +180,9 @@ class ExerciseServiceTest {
     }
 
     @Test
-    void givenExerciseDtoAlreadyExists_createExercise_thenThrowResourceNotFoundException(){
+    void givenExerciseDtoAlreadyExists_createExercise_thenThrowResourceNotFoundException() {
         //Given
-        ExerciseDto inputDto = new ExerciseDto("Bench Press", EXERCISE_SETS,
+        ExerciseRequestDto inputDto = new ExerciseRequestDto("Bench Press", EXERCISE_SETS,
                 EXERCISE_REPS, muscleGroup.getName(), EXERCISE_GROUP);
         String formattedName = "bench_press";
 
@@ -197,12 +200,87 @@ class ExerciseServiceTest {
         verify(exerciseMapper, never()).convertToResponseDto(any());
     }
 
-//    @Test
-//    void updateExercise() {
-//    }
-//
-//    @Test
-//    void deleteExercise() {
-//    }
+    @Test
+    void givenValidExerciseNameAndDto_updateExercise_thenReturnResponseDto() {
+        // Given
+        String exerciseName = "Bench Press";
+        ExerciseRequestDto toBeUpdatedInputDto = new ExerciseRequestDto("Updated Bench Press",
+                4,
+                15,
+                muscleGroup.getName(),
+                EXERCISE_GROUP);
+        Exercise updatedExercise = exerciseMapper.convertToEntity(toBeUpdatedInputDto);
+        ExerciseResponseDto updatedDto = new ExerciseResponseDto(
+                exercise.getId(),
+                toBeUpdatedInputDto.name(),
+                toBeUpdatedInputDto.sets(),
+                toBeUpdatedInputDto.reps(),
+                toBeUpdatedInputDto.muscleGroupName(),
+                toBeUpdatedInputDto.exerciseGroup()
+        );
+
+        given(inputFormatter.replaceSpacesWithHyphens(exerciseName)).willReturn(EXERCISE_NAME);
+        given(exerciseRepository.findExerciseByNameEqualsIgnoreCase(EXERCISE_NAME)).willReturn(Optional.of(exercise));
+        given(muscleGroupRepository.findMuscleGroupByNameEqualsIgnoreCase(toBeUpdatedInputDto.muscleGroupName()))
+                .willReturn(Optional.of(exercise.getMuscleGroup()));
+        given(exerciseRepository.save(any())).willReturn(updatedExercise);
+        given(exerciseMapper.convertToResponseDto(updatedExercise)).willReturn(updatedDto);
+
+        // When
+        var actual = underTest.updateExercise(exerciseName, toBeUpdatedInputDto);
+
+        // Then
+        assertAll(
+                () -> assertNotNull(actual),
+                () -> assertEquals(exercise.getId(), actual.id()),
+                () -> assertEquals(updatedDto.name(), actual.name()),
+                () -> assertEquals(updatedDto.sets(), actual.sets()),
+                () -> assertEquals(updatedDto.reps(), actual.reps()),
+                () -> assertEquals(updatedDto.muscleGroupName(), actual.muscleGroupName()),
+                () -> assertEquals(updatedDto.exerciseGroup(), actual.exerciseGroup())
+        );
+
+    }
+
+    @Test
+    void givenMuscleGroupNotFound_updateExercise_thenThrowResourceNotFoundException() {
+        // Given
+        String exerciseName = "Bench Press";
+        ExerciseRequestDto toBeUpdatedInputDto = new ExerciseRequestDto("Updated Bench Press",
+                4,
+                15,
+                "NonexistentMuscle",
+                EXERCISE_GROUP);
+
+        given(inputFormatter.replaceSpacesWithHyphens(exerciseName)).willReturn(EXERCISE_NAME);
+        given(exerciseRepository.findExerciseByNameEqualsIgnoreCase(EXERCISE_NAME)).willReturn(Optional.of(exercise));
+        given(muscleGroupRepository.findMuscleGroupByNameEqualsIgnoreCase(toBeUpdatedInputDto.muscleGroupName()))
+                .willReturn(Optional.empty()); // Muscle group not found
+
+        // When + Then
+        assertThrows(ResourceNotFound.class,
+                () -> underTest.updateExercise(exerciseName, toBeUpdatedInputDto),
+                "Expected updateExercise to throw ResourceNotFound for nonexistent muscle group");
+
+        // Verify method invocations
+        verify(exerciseRepository, never()).save(any());
+        verify(exerciseMapper, never()).convertToResponseDto(any());
+    }
+
+
+    @Test
+    void givenValidExerciseName_deleteExercise_thenExerciseIsDeleted() {
+        // Given
+        String exerciseName = "Bench Press";
+        given(inputFormatter.replaceSpacesWithHyphens(exerciseName)).willReturn(EXERCISE_NAME);
+        given(exerciseRepository.findExerciseByNameEqualsIgnoreCase(EXERCISE_NAME)).willReturn(Optional.of(exercise));
+
+        // When
+        underTest.deleteExercise(exerciseName);
+
+        // Then
+        verify(exerciseRepository, times(1)).delete(exercise);
+    }
+
 
 }
