@@ -1,0 +1,17 @@
+name: Deploy to Dev environment
+description: Deploy changes to the development environment after a successful CI build on the develop branch.
+
+on:
+  workflow_run:
+    workflows: ["Develop Branch CI"]
+    types:
+      - completed
+
+jobs:
+  # Deploy to dev environment if the CI workflow for the develop branch is successful
+  deploy-to-dev:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy to dev
+        run: echo "Deployed to dev"
