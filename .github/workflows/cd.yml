@@ -1,5 +1,4 @@
 name: Deploy to Dev environment
-description: Deploy changes to the development environment after a successful CI build on the develop branch.
 
 on:
   workflow_run:
