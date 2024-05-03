@@ -6,7 +6,6 @@ import iam.fitflex.entity.MuscleGroup;
 import iam.fitflex.enums.ExerciseGroup;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-//TODO Fix the disabled
 @DisplayName("Running the Exercise Repository Integration Tests")
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -34,7 +32,7 @@ class ExerciseRepositoryTestIT extends AbstractBaseContainer {
 
     @BeforeEach
     void setUp() {
-        muscleGroup = new MuscleGroup(1L, "Chest");
+        muscleGroup = new MuscleGroup(null, "Chest");
         exercise = new Exercise(
                 1L,
                 "Bench Press",
@@ -50,10 +48,10 @@ class ExerciseRepositoryTestIT extends AbstractBaseContainer {
     @AfterEach
     void tearDown() {
         underTest.deleteAll();
+        muscleGroupRepository.deleteAll();
     }
 
     @Test
-    @Disabled
     void findExerciseByNameEqualsIgnoreCase_thenReturnPresentOptional() {
         //Given
         muscleGroupRepository.save(muscleGroup);
@@ -68,7 +66,6 @@ class ExerciseRepositoryTestIT extends AbstractBaseContainer {
     }
 
     @Test
-    @Disabled
     void findExerciseByNameEqualsIgnoreCase_thenReturnEmptyOptional() {
         //Given
         muscleGroupRepository.save(muscleGroup);
@@ -94,7 +91,6 @@ class ExerciseRepositoryTestIT extends AbstractBaseContainer {
     }
 
     @Test
-    @Disabled
     void existsByNameEqualsIgnoreCase_thenReturnFalse() {
         //Given
         muscleGroupRepository.save(muscleGroup);
