@@ -25,6 +25,7 @@ jobs:
 
   # Run security scans to make sure everything is ✅
   security-scan:
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
