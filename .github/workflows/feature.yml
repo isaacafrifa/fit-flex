@@ -9,7 +9,7 @@ on:
       - 'README.md'
 
 jobs:
-  # Run unit tests, security scans, and build the project 🔨
+  # Run unit tests and build the project 🔨
   build:
     runs-on: ubuntu-latest
     steps:
@@ -24,12 +24,7 @@ jobs:
       - name: Run Unit Tests
         run: mvn test
 
-      - name: Run Snyk to check for vulnerabilities
-        uses: snyk/actions/maven@master
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-
-      - name: Build the project  and get artifact name
+      - name: Build the project and get artifact name
         id: build
         run: mvn clean package
 
@@ -40,10 +35,20 @@ jobs:
           path: target/
 
 
+  # Run security scans to make sure everything is ✅
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/maven@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
 
   # Run integration tests to make sure everything is ✅
   integration-test:
-    needs: build
+    needs: [build, security-scan]
     runs-on: ubuntu-latest
     steps:
       - name: Download the build artifact
