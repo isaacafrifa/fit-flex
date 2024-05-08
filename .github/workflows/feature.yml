@@ -26,12 +26,14 @@ jobs:
 
       - name: Build the project and get artifact name
         id: build
-        run: mvn clean package
+        run: |
+          mvn clean package
+          echo "VERSION=$(mvn -q -Dexec.executable='echo' -Dexec.args='${project.version}' --non-recursive exec:exec)" >> $GITHUB_OUTPUT
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ github.repository }}-${{ github.sha }}.jar  # Naming artifact with repo name & commit SHA
+          name: ${{ steps.build.outputs.VERSION }}.jar  # Naming artifact with repo name & commit SHA
           path: target/
 
 
