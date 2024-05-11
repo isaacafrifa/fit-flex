@@ -21,13 +21,9 @@ jobs:
         with:
           distribution: 'corretto'
           java-version: '17'
-    # separate unit and integration tests for clarity
-      - name: Run Unit Tests
-        run: mvn test
 
-      - name: Run integration tests
-        run: mvn verify -DskipTests
-
+      - name: Run Unit and Integration tests
+        run: mvn verify
 
 
   # Run security scans to make sure everything is ✅
