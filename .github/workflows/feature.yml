@@ -9,8 +9,8 @@ on:
       - 'README.md'
 
 jobs:
-  # Run unit tests and build the project 🔨
-  build:
+  # Build, Run Unit & Integration Tests 🔨
+  build-and-test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -21,24 +21,18 @@ jobs:
         with:
           distribution: 'corretto'
           java-version: '17'
+    # separate unit and integration tests for clarity
       - name: Run Unit Tests
         run: mvn test
 
-      - name: Build the project and get artifact name
-        id: build
-        run: |
-          mvn clean package
-          echo "VERSION=$(mvn -q -Dexec.executable='echo' -Dexec.args='${project.version}' --non-recursive exec:exec)" >> $GITHUB_OUTPUT
+      - name: Run integration tests
+        run: mvn verify -DskipTests
 
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ steps.build.outputs.VERSION }}.jar  # Naming artifact with repo name & commit SHA
-          path: target/
 
 
   # Run security scans to make sure everything is ✅
   security-scan:
+    needs: build-and-test  # Depends on successful build and testing
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
@@ -46,18 +40,3 @@ jobs:
         uses: snyk/actions/maven@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-
-
-  # Run integration tests to make sure everything is ✅
-  integration-test:
-    needs: [build, security-scan]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download the build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ needs.build.outputs.artifact_name }}  # Reference build job output
-          path: target/  # Download location within the job's workspace
-
-      - name: Run integration tests
-        run: mvn verify -DskipTests
