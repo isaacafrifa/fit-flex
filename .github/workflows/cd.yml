@@ -1,6 +1,4 @@
-name: Deploy to Dev
-description: Deploys the application to the dev environment
-
+name: Deploy to Dev environment
 
 jobs:
 #   Build docker image
