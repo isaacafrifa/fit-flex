@@ -1,16 +1,26 @@
-name: Deploy to Dev environment
+name: Deploy to Dev
+description: Deploys the application to the dev environment
 
+
+jobs:
+#   Build docker image
+  build-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'amazoncorretto:17-alpine3.19'
+          java-version: '17'
+      - name: Extract project version
+        id: extract_version
+        run: |
+          echo "VERSION=$(mvn -q -Dexec.executable='echo' -Dexec.args='${project.version}' --non-recursive exec:exec)" >> $GITHUB_OUTPUT
+          echo "VERSION=${{ steps.extract_version.outputs.VERSION }}"
+
+# Perform the jobs when the CI workflow for the develop branch is successful
 on:
   workflow_run:
     workflows: ["Develop Branch CI"]
     types:
       - completed
-
-jobs:
-  # Deploy to dev environment if the CI workflow for the develop branch is successful
-  deploy-to-dev:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Deploy to dev
-        run: echo "Deployed to dev"
