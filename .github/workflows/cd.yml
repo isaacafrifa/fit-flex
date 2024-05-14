@@ -19,6 +19,6 @@ jobs:
 # Perform the jobs when the CI workflow for the develop branch is successful
 on:
   workflow_run:
-#    workflows: ["Develop Branch CI"]
-#    types:
-#      - completed
+    workflows: ["Develop Branch CI"]
+    types:
+      - completed
