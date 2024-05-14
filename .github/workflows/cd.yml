@@ -8,7 +8,7 @@ jobs:
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
-          distribution: 'openjdk:17-alpine3.19'
+          distribution: 'corretto'
           java-version: '17'
       - name: Extract project version
         id: extract_version
