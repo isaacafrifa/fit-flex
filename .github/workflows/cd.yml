@@ -46,8 +46,11 @@ jobs:
         # If the login fails, the job will stop and an error will be thrown
         continue-on-error: false
 
-      - name: Push Docker image
-        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/fitflex:${{ steps.extract_version.outputs.VERSION}}
+      - name: Print version
+        run: echo "VERSION=${{ steps.extract_version.outputs.VERSION }}"
+
+#      - name: Push Docker image
+#        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/fitflex:${{ steps.extract_version.outputs.VERSION}}
 
 # Perform the jobs when the CI workflow for the develop branch is successful
 #on:
