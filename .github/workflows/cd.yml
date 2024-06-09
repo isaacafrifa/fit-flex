@@ -19,15 +19,15 @@ jobs:
 
       - name: Extract version
         id: extract_version
+         # Get project version from pom.xml and set this version as an environment variable named 'VERSION' for use in the GitHub Actions runner.
         run: |
           echo "VERSION=$(./mvnw -q -Dexec.executable='echo' -Dexec.args='${project.version}' --non-recursive exec:exec)" >> $GITHUB_ENV
-          echo "::set-output name=VERSION::$(./mvnw -q -Dexec.executable='echo' -Dexec.args='${project.version}' --non-recursive exec:exec)"
 
       - name: Print project version
-        run: echo "VERSION=${{ steps.extract_version.outputs.VERSION }}"
+        run: echo "VERSION=${{ env.VERSION }}"
 
     outputs:
-      version: ${{ steps.extract_version.outputs.VERSION }}
+      version: ${{ env.VERSION }}
 
 
     #   Build and push docker image to DockerHub
