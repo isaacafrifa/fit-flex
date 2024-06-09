@@ -1,5 +1,8 @@
 name: Deploy to Dev environment
 
+on:
+  workflow_dispatch:
+
 jobs:
 #   Build docker image
   build-image:
@@ -13,12 +16,14 @@ jobs:
       - name: Extract project version
         id: extract_version
         run: |
-          echo "VERSION=$(./mvnw -q -Dexec.executable='echo' -Dexec.args='${project.version}' --non-recursive exec:exec)" >> $GITHUB_OUTPUT
-          echo "VERSION=${{ steps.extract_version.outputs.VERSION }}"
+          echo "VERSION=$(./mvnw -q -Dexec.executable='echo' -Dexec.args='${project.version}' --non-recursive exec:exec)" >> $GITHUB_ENV
+          echo "::set-output name=VERSION::$(./mvnw -q -Dexec.executable='echo' -Dexec.args='${project.version}' --non-recursive exec:exec)"
+      - name: Print project version
+        run: echo "VERSION=${{ steps.extract_version.outputs.VERSION }}"
 
 # Perform the jobs when the CI workflow for the develop branch is successful
-on:
-  workflow_run:
-    workflows: ["Develop Branch CI"]
-    types:
-      - completed
+#on:
+#  workflow_run:
+#    workflows: ["Develop Branch CI"]
+#    types:
+#      - completed
