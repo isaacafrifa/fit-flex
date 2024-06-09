@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 jobs:
-#   Build docker image
+  #   Build docker image
   build-image:
     runs-on: ubuntu-latest
     steps:
@@ -31,23 +31,23 @@ jobs:
 
 
     #   Push Docker image to DockerHub
-    push-image:
-      needs: build-image
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout code
-          uses: actions/checkout@v4
+  push-image:
+    needs: build-image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-        - name: Log in to DockerHub
-          uses: docker/login-action@v3
-          with:
-            username: ${{ secrets.DOCKERHUB_USERNAME }}
-            password: ${{ secrets.DOCKERHUB_TOKEN }}
-          # If the login fails, the job will stop and an error will be thrown
-          continue-on-error: false
+      - name: Log in to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+        # If the login fails, the job will stop and an error will be thrown
+        continue-on-error: false
 
-        - name: Push Docker image
-          run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/fitflex:${{ steps.extract_version.outputs.VERSION}}
+      - name: Push Docker image
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/fitflex:${{ steps.extract_version.outputs.VERSION}}
 
 # Perform the jobs when the CI workflow for the develop branch is successful
 #on:
