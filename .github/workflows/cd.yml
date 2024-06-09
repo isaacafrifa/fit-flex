@@ -29,6 +29,9 @@ jobs:
       - name: Build Docker image
         run: docker build . -t ${{ secrets.DOCKERHUB_USERNAME }}/fitflex:${{ steps.extract_version.outputs.VERSION}}
 
+    outputs:
+      version: ${{ steps.extract_version.outputs.VERSION }}
+
 
     #   Push Docker image to DockerHub
   push-image:
@@ -46,11 +49,8 @@ jobs:
         # If the login fails, the job will stop and an error will be thrown
         continue-on-error: false
 
-      - name: Print version
-        run: echo "VERSION=${{ steps.extract_version.outputs.VERSION }}"
-
-#      - name: Push Docker image
-#        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/fitflex:${{ steps.extract_version.outputs.VERSION}}
+      - name: Push Docker image
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/fitflex:${{ needs.build-image.outputs.version }}
 
 # Perform the jobs when the CI workflow for the develop branch is successful
 #on:
