@@ -1,16 +1,61 @@
 name: Deploy to Dev environment
 
 on:
-  workflow_run:
-    workflows: ["Develop Branch CI"]
-    types:
-      - completed
+  workflow_dispatch:
 
 jobs:
-  # Deploy to dev environment if the CI workflow for the develop branch is successful
-  deploy-to-dev:
+  #   Extract the project version from pom.xml
+  extract-project-version:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Deploy to dev
-        run: echo "Deployed to dev"
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'corretto'
+          java-version: '17'
+
+      - name: Extract version
+        id: extract_version
+         # Get project version from pom.xml and set this version as an environment variable named 'VERSION' for use in the GitHub Actions runner.
+        run: |
+          echo "VERSION=$(./mvnw -q -Dexec.executable='echo' -Dexec.args='${project.version}' --non-recursive exec:exec)" >> $GITHUB_ENV
+
+      - name: Print project version
+        run: echo "VERSION=${{ env.VERSION }}"
+
+    outputs:
+      version: ${{ env.VERSION }}
+
+
+    #   Build and push docker image to DockerHub
+  build-and-push:
+    needs: extract-project-version
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Log in to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+        # If the login fails, the job will stop and an error will be thrown
+        continue-on-error: false
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/fitflex:${{ needs.extract-project-version.outputs.version }}
+
+# Perform the jobs when the CI workflow for the develop branch is successful
+#on:
+#  workflow_run:
+#    workflows: ["Develop Branch CI"]
+#    types:
+#      - completed
