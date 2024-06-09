@@ -1,16 +1,13 @@
 # Build stage
 FROM maven:3.8.7-openjdk-18 AS builder
 
-# Define build arguments for JAR name pattern
-# Default to '1.0.0' if APP_VERSION is not provided
-ARG VERSION=${APP_VERSION:-1.0.0}
-ARG JAR_FILE=target/${VERSION}.jar
-
 # Set working directory for the application
-WORKDIR /app
+WORKDIR /build
 
 # Copy project code to the build context
-COPY . .
+COPY pom.xml .
+RUN mvn dependency:go-offline
+COPY src ./src
 
 # Build the application using Maven
 RUN mvn clean package -DskipTests
@@ -21,8 +18,13 @@ FROM amazoncorretto:17-alpine3.19
 # Set the working directory
 WORKDIR /app
 
+# Set the environment variable
+ENV POSTGRES_URL=postgres_url
+ENV POSTGRES_USERNAME=postgres_username
+ENV POSTGRES_PASSWORD=postgres_password
+
 # Copy the JAR file from the build stage
-COPY --from=builder /app/target/${JAR_FILE} ${JAR_FILE}
+COPY --from=builder /build/target/*.jar /app/app.jar
 
 # Set the entrypoint to run the application
-ENTRYPOINT ["java", "-jar", "target/${JAR_FILE}"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
