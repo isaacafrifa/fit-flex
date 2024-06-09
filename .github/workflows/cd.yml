@@ -4,8 +4,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  #   Build docker image
-  build-image:
+  #   Extract the project version from pom.xml
+  extract-project-version:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -17,7 +17,7 @@ jobs:
           distribution: 'corretto'
           java-version: '17'
 
-      - name: Extract project version
+      - name: Extract version
         id: extract_version
         run: |
           echo "VERSION=$(./mvnw -q -Dexec.executable='echo' -Dexec.args='${project.version}' --non-recursive exec:exec)" >> $GITHUB_ENV
@@ -26,16 +26,13 @@ jobs:
       - name: Print project version
         run: echo "VERSION=${{ steps.extract_version.outputs.VERSION }}"
 
-      - name: Build Docker image
-        run: docker build . -t ${{ secrets.DOCKERHUB_USERNAME }}/fitflex:${{ steps.extract_version.outputs.VERSION}}
-
     outputs:
       version: ${{ steps.extract_version.outputs.VERSION }}
 
 
-    #   Push Docker image to DockerHub
-  push-image:
-    needs: build-image
+    #   Build and push docker image to DockerHub
+  build-and-push:
+    needs: extract-project-version
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -49,8 +46,12 @@ jobs:
         # If the login fails, the job will stop and an error will be thrown
         continue-on-error: false
 
-      - name: Push Docker image
-        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/fitflex:${{ needs.build-image.outputs.version }}
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/fitflex:${{ needs.build-image.outputs.version }}
 
 # Perform the jobs when the CI workflow for the develop branch is successful
 #on:
