@@ -22,8 +22,32 @@ jobs:
         run: |
           echo "VERSION=$(./mvnw -q -Dexec.executable='echo' -Dexec.args='${project.version}' --non-recursive exec:exec)" >> $GITHUB_ENV
           echo "::set-output name=VERSION::$(./mvnw -q -Dexec.executable='echo' -Dexec.args='${project.version}' --non-recursive exec:exec)"
+
       - name: Print project version
         run: echo "VERSION=${{ steps.extract_version.outputs.VERSION }}"
+
+      - name: Build Docker image
+        run: docker build . -t DOCKER_IMAGE_NAME:${{ steps.extract_version.outputs.VERSION}}
+
+
+    #   Push Docker image to DockerHub
+    push-image:
+      needs: build-image
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
+
+        - name: Log in to DockerHub
+          uses: docker/login-action@v3
+          with:
+            username: ${{ secrets.DOCKERHUB_USERNAME }}
+            password: ${{ secrets.DOCKERHUB_TOKEN }}
+          # If the login fails, the job will stop and an error will be thrown
+          continue-on-error: false
+
+        - name: Push Docker image
+          run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/fitflex:${{ steps.extract_version.outputs.VERSION}}
 
 # Perform the jobs when the CI workflow for the develop branch is successful
 #on:
