@@ -6,7 +6,7 @@ import iam.fitflex.dto.PageSliceDto;
 import iam.fitflex.entity.Exercise;
 import iam.fitflex.exception.ResourceAlreadyExists;
 import iam.fitflex.exception.ResourceNotFound;
-import iam.fitflex.mappper.ExerciseMapper;
+import iam.fitflex.mapper.ExerciseMapper;
 import iam.fitflex.repository.ExerciseRepository;
 import iam.fitflex.repository.MuscleGroupRepository;
 import iam.fitflex.util.InputFormatter;

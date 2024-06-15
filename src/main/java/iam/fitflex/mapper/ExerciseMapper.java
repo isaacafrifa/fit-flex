@@ -1,4 +1,4 @@
-package iam.fitflex.mappper;
+package iam.fitflex.mapper;
 
 import iam.fitflex.dto.ExerciseRequestDto;
 import iam.fitflex.dto.ExerciseResponseDto;

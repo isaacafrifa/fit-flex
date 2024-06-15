@@ -6,7 +6,7 @@ import iam.fitflex.dto.PageSliceDto;
 import iam.fitflex.entity.MuscleGroup;
 import iam.fitflex.exception.ResourceAlreadyExists;
 import iam.fitflex.exception.ResourceNotFound;
-import iam.fitflex.mappper.MuscleGroupMapper;
+import iam.fitflex.mapper.MuscleGroupMapper;
 import iam.fitflex.repository.MuscleGroupRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;

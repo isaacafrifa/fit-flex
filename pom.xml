@@ -68,6 +68,8 @@
             <artifactId>postgresql</artifactId>
             <scope>test</scope>
         </dependency>
+        <!--  For Lambda, the Serverless Java Container will accept API Gateway Proxy requests and transform them into a plain Java object.
+        The library will also transform outputs into a suitable API Gateway response object.-->
         <dependency>
             <groupId>com.amazonaws.serverless</groupId>
             <artifactId>aws-serverless-java-container-springboot3</artifactId>
@@ -149,16 +151,9 @@
             </activation>
 
             <dependencies>
-                <!--  For Lambda, the Serverless Java Container will accept API Gateway Proxy requests and transform them into a plain Java object. The library will also transform outputs into a suitable API Gateway response object.-->
-<!--                <dependency>-->
-<!--                    <groupId>com.amazonaws.serverless</groupId>-->
-<!--                    <artifactId>aws-serverless-java-container-springboot3</artifactId>-->
-<!--                    <version>${aws.serverless.version}</version>-->
-<!--                </dependency>-->
                 <dependency>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-starter-web</artifactId>
-                    <!--            Exclude tomcat server-->
                     <!-- Since the application will use API Gateway to handle inbound HTTP requests, the embedded HTTP server must be disabled.-->
                     <exclusions>
                         <exclusion>
@@ -176,6 +171,7 @@
                         <version>3.5.1</version>
                         <configuration>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <finalName>${project.artifactId}-lambda-${project.version}-shaded</finalName>
                         </configuration>
                         <executions>
                             <execution>
