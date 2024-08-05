@@ -11,4 +11,4 @@ This is a REST API that showcases various workout exercises.
 + Postgres
 
 ## Future Work
-+ API to be deployed to a cloud provider
++ This API is currently pushed to DockerHub and will be deployed to AWS.
